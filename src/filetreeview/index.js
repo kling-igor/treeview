@@ -6,7 +6,9 @@ export const ICONS_PATH = 'assets/icons'
 const getFileName = ({ fileName }) => fileName
 
 const specialFiles = {
-  'package.json': 'npm.svg'
+  'package.json': 'npm.svg',
+  '.gitignore': 'git.svg',
+  '.npmrc': 'npm.svg',
 }
 
 const fileExtensions = {
@@ -49,6 +51,8 @@ const nodeIcon = (name, ellapsed = false, depthLevel = 0) => {
   }
 
   if (icon) return `${ICONS_PATH}/${icon}`
+
+  return `${ICONS_PATH}/file.svg`
 }
 
 export class FileTreeView {

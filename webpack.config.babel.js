@@ -40,6 +40,10 @@ module.exports = env => ({
     })
   ],
 
+  externals: {
+    dat: 'dat'
+  },
+
   module: {
     rules: [
       {

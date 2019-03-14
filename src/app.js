@@ -3,6 +3,7 @@ import React, { PureComponent } from 'react'
 import { createGlobalStyle } from 'styled-components'
 
 import { FileTreeView } from './filetreeview'
+import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 export const ICONS_PATH = 'assets/icons'
 
@@ -63,6 +64,53 @@ const fileTree = [
   }
 ]
 
+
+const newFileTree = [
+  {
+    fileName: 'controllers',
+    children: [{ fileName: 'login.js' }, { fileName: 'main.js' }]
+  },
+  {
+    fileName: 'models',
+    children: [{ fileName: 'model1.js' }, { fileName: 'model2.js' }]
+  },
+  {
+    fileName: 'styles',
+    children: [{ fileName: 'style1.json' }, { fileName: 'style2.json' }]
+  },
+  {
+    fileName: 'views',
+    children: [{ fileName: 'login.json' }, { fileName: 'main.json' }]
+  },
+  {
+    fileName: 'README.md'
+  },
+  {
+    fileName: 'package.json'
+  },
+  {
+    fileName: '.gitignore'
+  }
+]
+
+
+
+const gui = new dat.GUI();
+
+// const obj = {
+//   foo: 'foo',
+//   boolean: false,
+//   func: () => {
+//     console.log('FUNC!!!')
+//   }
+// }
+
+// gui.add(obj, 'foo')
+// gui.add(obj, 'func')
+// gui.add(obj, 'boolean')
+
+
+
 export default class App extends PureComponent {
 
   constructor(props) {
@@ -70,11 +118,20 @@ export default class App extends PureComponent {
 
     this.fileTreeView = new FileTreeView(this.onItemPress)
     this.fileTreeView.setTreeData(fileTree)
+
+
+    gui.add(this, 'addTreeData')
   }
 
   onItemPress = item => {
     console.log('PRESSED:', item)
   }
+
+
+  addTreeData = () => {
+    this.fileTreeView.setTreeData(newFileTree)
+  }
+
 
   render() {
     return (
