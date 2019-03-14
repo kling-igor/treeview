@@ -2,7 +2,7 @@ import React, { PureComponent } from 'react'
 
 import { createGlobalStyle } from 'styled-components'
 
-import { TreeViewModel, TreeView } from './treeview'
+import { FileTreeView } from './filetreeview'
 
 export const ICONS_PATH = 'assets/icons'
 
@@ -38,10 +38,6 @@ const GlobalStyle = createGlobalStyle`
   }
 `
 
-const getFileName = ({ fileName }) => fileName
-
-const fileTreeModel = new TreeViewModel(getFileName)
-
 const fileTree = [
   {
     fileName: 'controllers',
@@ -67,55 +63,15 @@ const fileTree = [
   }
 ]
 
-fileTreeModel.setTreeData(fileTree)
-
-const specialFiles = {
-  'package.json': 'npm.svg'
-}
-
-const fileExtensions = {
-  js: 'javascript.svg',
-  json: 'json.svg',
-  md: 'markdown.svg',
-  txt: 'file.svg'
-}
-
-const fileExtensionRegex = /\.([0-9a-z]{1,5})$/i
-
-const nodeIcon = (name, ellapsed = false, depthLevel = 0) => {
-  let icon
-
-  if (depthLevel === 0) {
-    if (name === 'controllers') {
-      icon = ellapsed ? `folder-src-open.svg` : `folder-src.svg`
-    } else if (name === 'views') {
-      icon = ellapsed ? `folder-layout-open.svg` : `folder-layout.svg`
-    } else if (name === 'styles') {
-      icon = ellapsed ? `folder-css-open.svg` : `folder-css.svg`
-    } else if (name === 'models') {
-      icon = ellapsed ? `folder-database-open.svg` : `folder-database.svg`
-    }
-
-    if (!icon) {
-      icon = specialFiles[name]
-    }
-  }
-
-  if (!icon) {
-    const extensionMatch = name.match(fileExtensionRegex)
-
-    if (extensionMatch) {
-      const extension = extensionMatch[1]
-      if (extension) {
-        icon = fileExtensions[extension.toLowerCase()]
-      }
-    }
-  }
-
-  if (icon) return `${ICONS_PATH}/${icon}`
-}
-
 export default class App extends PureComponent {
+
+  constructor(props) {
+    super(props)
+
+    this.fileTreeView = new FileTreeView(this.onItemPress)
+    this.fileTreeView.setTreeData(fileTree)
+  }
+
   onItemPress = item => {
     console.log('PRESSED:', item)
   }
@@ -124,8 +80,26 @@ export default class App extends PureComponent {
     return (
       <>
         <GlobalStyle />
-        <TreeView data={fileTreeModel} itemKey={getFileName} nodeIcon={nodeIcon} onItemPress={this.onItemPress} />
+        {this.fileTreeView.widget}
       </>
     )
+  }
+}
+
+
+const theme = {
+  list: {
+    activeSelectionBackground: '#', // List/Tree background color for the selected item when the list/tree is active.
+    activeSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is active.
+    focusBackground: '#', // List/Tree background color for the focused item when the list/tree is active.
+    focusForeground: '#', // List/Tree foreground color for the focused item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.
+    hoverBackground: '#', // List/Tree background when hovering over items using the mouse.
+    hoverForeground: '#', // List/Tree foreground when hovering over items using the mouse.
+    inactiveSelectionBackground: '#', // List/Tree background color for the selected item when the list/tree is inactive.
+    inactiveSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.
+    inactiveFocusBackground: '#', // List background color for the focused item when the list is inactive. An active list has keyboard focus, an inactive does not. Currently only supported in lists.
+    invalidItemForeground: '#', // List/Tree foreground color for invalid items, for example an unresolved root in explorer.
+    errorForeground: '#', // Foreground color of list items containing errors.
+    warningForeground: '#' // Foreground color of list items containing warnings.
   }
 }
