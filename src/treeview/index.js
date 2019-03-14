@@ -13,8 +13,6 @@ const flatTree = itemKey => (tree, path = '', flattenTree = [], depthLevel = 0) 
       flatItem = { ...flatItem, isNode: true, ellapsed }
     }
 
-    console.log('* ', flatItem)
-
     accum.push(flatItem)
 
     if (children && ellapsed) {
@@ -119,11 +117,7 @@ const ListItemContainerStyle = styled.li`
   color: #cacaca;
 
   cursor: pointer;
-  /* -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; */
   user-select: none;
-  /* padding-left: ${({ depthLevel }) => 16 + depthLevel * 16}; */
 
   :hover {
     background-color: #414339;
@@ -136,7 +130,7 @@ const ListItemInnerContainerStyle = styled.span`
   flex-wrap: nowrap;
   justify-content: flex-start;
   align-items: center;
-  margin-left: ${({ depthLevel }) => `${16 + depthLevel * 16}px`};
+  margin-left: ${({ depthLevel, isNode }) => `${depthLevel * 16 + (isNode ? 0 : 8)}px`};
 `
 
 const NodeArrowStyle = styled.span`
@@ -210,7 +204,7 @@ export class TreeView extends Component {
 
     return (
       <ListItemContainerStyle key={fullPath} onClick={onListItemClick}>
-        <ListItemInnerContainerStyle depthLevel={depthLevel}>
+        <ListItemInnerContainerStyle depthLevel={depthLevel} isNode={isNode}>
           {isNode && <NodeArrowStyle ellapsed={ellapsed} />}
           {icon && <ListItemIconStyle height="18" width="18" src={icon} />}
           <ListItemLabelStyle>{name}</ListItemLabelStyle>

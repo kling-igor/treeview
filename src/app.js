@@ -39,8 +39,15 @@ const getFileName = ({ fileName }) => fileName
 const fileTreeModel = new TreeViewModel(getFileName)
 
 const fileTree = [
-  { fileName: 'a.js' },
-  { fileName: 'folder', children: [{ fileName: 'b1.js' }, { fileName: 'b2.js' }] }
+  {
+    fileName: 'folder',
+    children: [
+      { fileName: 'c1.js', children: [{ fileName: 'd1.js' }, { fileName: 'd2.js' }] },
+      { fileName: 'b1.js' },
+      { fileName: 'b2.js' }
+    ]
+  },
+  { fileName: 'a.js' }
 ]
 
 fileTreeModel.setTreeData(fileTree)
