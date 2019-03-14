@@ -104,6 +104,76 @@ export class TreeViewModel {
   }
 }
 
+const ListItemContainerStyle = styled.li`
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  background-color: transparent;
+  line-height: 1.7em;
+  color: #cacaca;
+
+  cursor: pointer;
+  /* -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none; */
+  user-select: none;
+  /* padding-left: ${({ depthLevel }) => 16 + depthLevel * 16}; */
+
+  :hover {
+    background-color: #414339;
+  }
+`
+
+const ListItemInnerContainerStyle = styled.span`
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  margin-left: ${({ depthLevel }) => `${16 + depthLevel * 16}px`};
+`
+
+const NodeArrowStyle = styled.span`
+  color: #ff0000;
+  margin-right: 6px;
+  display: inline-block;
+  transform: ${({ ellapsed }) => (ellapsed ? 'rotate(-45deg)' : 'rotate(-90deg)')};
+  transition: transform 200ms cubic-bezier(0.4, 1, 0.75, 0.9);
+
+  ::after {
+    content: '▾';
+  }
+`
+const ListItemLabelStyle = styled.span`
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`
+
+const ListStyle = styled.ul`
+  position: relative;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+  font-family: 'Open Sans', sans-serif;
+  white-space: nowrap;
+  overflow-y: auto;
+  overflow-x: scroll;
+  text-overflow: ellipsis;
+  width: 100%;
+  height: 100%;
+`
+
+const ListItemIconStyle = styled.img`
+  margin-right: 4px;
+`
+
 @observer
 export class TreeView extends Component {
   constructor(props) {
@@ -126,27 +196,32 @@ export class TreeView extends Component {
   }
 
   renderItem = ({ item, path, depthLevel, isNode, ellapsed }) => {
+    console.log(
+      `RENDER: item:${JSON.stringify(item)} path:${path} depthLevel:${depthLevel} isNode:${isNode} ellapsed=${ellapsed}`
+    )
+
     const name = this.itemKey(item)
 
     const fullPath = `${path}/${name}`
 
     const onListItemClick = () => this.onListItemClick(fullPath, isNode, ellapsed)
 
+    const icon = false
+
     return (
-      <li
-        key={fullPath}
-        style={{
-          paddingLeft: 16 + depthLevel * 16
-        }}
-        onClick={onListItemClick}
-      >
-        {name}
-      </li>
+      <ListItemContainerStyle key={fullPath} onClick={onListItemClick}>
+        <ListItemInnerContainerStyle depthLevel={depthLevel}>
+          {isNode && <NodeArrowStyle ellapsed={ellapsed} />}
+          {icon && <ListItemIconStyle height="18" width="18" src={icon} />}
+          <ListItemLabelStyle>{name}</ListItemLabelStyle>
+        </ListItemInnerContainerStyle>
+        {/* <span>M</span> */}
+      </ListItemContainerStyle>
     )
   }
 
   render() {
     const { flatData } = this.props.data
-    return <ul>{flatData.map(this.renderItem)}</ul>
+    return <ListStyle>{flatData.map(this.renderItem)}</ListStyle>
   }
 }
