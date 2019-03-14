@@ -134,7 +134,7 @@ const ListItemInnerContainerStyle = styled.span`
 `
 
 const NodeArrowStyle = styled.span`
-  color: #ff0000;
+  color: white;
   margin-right: 6px;
   display: inline-block;
   transform: ${({ ellapsed }) => (ellapsed ? 'rotate(-45deg)' : 'rotate(-90deg)')};
@@ -190,23 +190,19 @@ export class TreeView extends Component {
   }
 
   renderItem = ({ item, path, depthLevel, isNode, ellapsed }) => {
-    console.log(
-      `RENDER: item:${JSON.stringify(item)} path:${path} depthLevel:${depthLevel} isNode:${isNode} ellapsed=${ellapsed}`
-    )
-
     const name = this.itemKey(item)
 
     const fullPath = `${path}/${name}`
 
     const onListItemClick = () => this.onListItemClick(fullPath, isNode, ellapsed)
 
-    const icon = false
+    const icon = this.props.nodeIcon ? this.props.nodeIcon(name, ellapsed, depthLevel) : false
 
     return (
       <ListItemContainerStyle key={fullPath} onClick={onListItemClick}>
         <ListItemInnerContainerStyle depthLevel={depthLevel} isNode={isNode}>
           {isNode && <NodeArrowStyle ellapsed={ellapsed} />}
-          {icon && <ListItemIconStyle height="18" width="18" src={icon} />}
+          {icon && <ListItemIconStyle height="16" width="16" src={icon} />}
           <ListItemLabelStyle>{name}</ListItemLabelStyle>
         </ListItemInnerContainerStyle>
         {/* <span>M</span> */}
