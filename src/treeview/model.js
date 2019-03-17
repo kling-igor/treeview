@@ -1,6 +1,9 @@
 import { observalbe, computed, observable, action } from 'mobx'
 
-const flatTree = itemKey => (tree, path = '', flattenTree = [], depthLevel = 0) => {
+const flatTree = itemKey => (tree, selectedItemPath = null, path = '', flattenTree = [], depthLevel = 0) => {
+
+  console.log('SELECTED PATH:', selectedItemPath)
+
   tree.reduce((accum, item) => {
     const { children, ellapsed = false, ...rest } = item
 
@@ -10,10 +13,15 @@ const flatTree = itemKey => (tree, path = '', flattenTree = [], depthLevel = 0) 
       flatItem = { ...flatItem, isNode: true, ellapsed }
     }
 
+    if (selectedItemPath === `${path}/${itemKey(item)}`) {
+      console.log('SELECTED:', `${path}/${itemKey(item)}`)
+      flatItem = { ...flatItem, selected: true }
+    }
+
     accum.push(flatItem)
 
     if (children && ellapsed) {
-      flatTree(itemKey)(children, `${path}/${itemKey(item)}`, accum, depthLevel + 1)
+      flatTree(itemKey)(children, selectedItemPath, `${path}/${itemKey(item)}`, accum, depthLevel + 1)
     }
 
     return accum
@@ -27,16 +35,30 @@ const flatTree = itemKey => (tree, path = '', flattenTree = [], depthLevel = 0) 
 export class TreeViewModel {
   @observable.ref treeData = []
 
+  @observable selectedItemPath = null
+
   // линеаризованное дерево
   @computed get flatData() {
-    return this.flatTree(this.treeData)
+    return this.flatTree(this.treeData, this.selectedItemPath)
   }
 
   @action.bound
   setTreeData(treeData) {
-    // тут должно происходить сравнение деревьев
-    // новое дерево получает все состояния ellapsed из старого
+    // сравнение деревьев и наследование аттрибута ellapsed от старого дерева
+    // возможно придется и другие аттрибуты наследовать
+    const traverse = (item, oldTreeData) => {
+      if (Array.isArray(item.children)) {
+        const newName = this.itemKey(item)
+        const oldNode = oldTreeData.find(item => this.itemKey(item) === newName)
 
+        if (oldNode && Array.isArray(oldNode.children)) {
+          item.ellapsed = oldNode.ellapsed || false
+          item.children.forEach(child => traverse(child, oldNode.children))
+        }
+      }
+    }
+
+    treeData.forEach(item => traverse(item, this.treeData))
     this.treeData = treeData
   }
 
@@ -45,7 +67,7 @@ export class TreeViewModel {
 
     if (node) {
       node.ellapsed = false
-      this.setTreeData([...this.treeData])
+      this.treeData = [...this.treeData]
     }
   }
 
@@ -53,7 +75,7 @@ export class TreeViewModel {
     const node = this.findNode(fullPath)
     if (node) {
       node.ellapsed = true
-      this.setTreeData([...this.treeData])
+      this.treeData = [...this.treeData]
     }
   }
 
@@ -93,8 +115,42 @@ export class TreeViewModel {
     }
   }
 
-  constructor(itemKey) {
+  // разворачивает дерево для выбираемого элемента
+  // нужно для случав когда "выбор" осущуствляется искусственно
+  setItemSelected = path => {
+    const node = this.findNode(path)
+    if (node) {
+      this.selectedItemPath = path
+      let folders = path.split('/').slice(1, -1)
+
+
+      const traverse = (folders, treeData = []) => {
+        const [folderName, ...rest] = folders
+
+        if (folderName) {
+          const node = treeData.find(item => this.itemKey(item) === folderName)
+          if (node) {
+            node.ellapsed = true
+            traverse(rest, node.children)
+          }
+        }
+      }
+
+      traverse(folders, this.treeData)
+
+      this.treeData = [...this.treeData]
+    }
+  }
+
+  // для выбора, осуществляемого в компоннте
+  onItemSelect = (path) => {
+    this.selectedItemPath = path
+    this.__onItemSelect(path)
+  }
+
+  constructor(itemKey, onItemSelect) {
     this.itemKey = itemKey
-    this.flatTree = flatTree(itemKey)
+    this.__onItemSelect = onItemSelect
+    this.flatTree = flatTree(itemKey, this.selectedItemPath)
   }
 }

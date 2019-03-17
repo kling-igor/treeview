@@ -1,65 +1,13 @@
 import React from 'react'
 import { TreeView, TreeViewModel } from '../treeview'
 
-export const ICONS_PATH = 'assets/icons'
+import fileIcon from './fileIcon'
 
 const getFileName = ({ fileName }) => fileName
-
-const specialFiles = {
-  'package.json': 'npm.svg',
-  '.gitignore': 'git.svg',
-  '.npmrc': 'npm.svg',
-}
-
-const fileExtensions = {
-  js: 'javascript.svg',
-  json: 'json.svg',
-  md: 'markdown.svg',
-  txt: 'file.svg'
-}
-
-const fileExtensionRegex = /\.([0-9a-z]{1,5})$/i
-
-const nodeIcon = (name, ellapsed = false, depthLevel = 0) => {
-  let icon
-
-  if (depthLevel === 0) {
-    if (name === 'controllers') {
-      icon = ellapsed ? `folder-src-open.svg` : `folder-src.svg`
-    } else if (name === 'views') {
-      icon = ellapsed ? `folder-layout-open.svg` : `folder-layout.svg`
-    } else if (name === 'styles') {
-      icon = ellapsed ? `folder-css-open.svg` : `folder-css.svg`
-    } else if (name === 'models') {
-      icon = ellapsed ? `folder-database-open.svg` : `folder-database.svg`
-    }
-
-    if (!icon) {
-      icon = specialFiles[name]
-    }
-  }
-
-  if (!icon) {
-    const extensionMatch = name.match(fileExtensionRegex)
-
-    if (extensionMatch) {
-      const extension = extensionMatch[1]
-      if (extension) {
-        icon = fileExtensions[extension.toLowerCase()]
-      }
-    }
-  }
-
-  if (icon) return `${ICONS_PATH}/${icon}`
-
-  return `${ICONS_PATH}/file.svg`
-}
-
 export class FileTreeView {
   constructor(onItemPress) {
-    this.model = new TreeViewModel(getFileName)
-
-    this._widget = <TreeView data={this.model} itemKey={getFileName} nodeIcon={nodeIcon} onItemPress={onItemPress} />
+    this.model = new TreeViewModel(getFileName, onItemPress)
+    this._widget = <TreeView data={this.model} onItemPress={this.model.onItemSelect} itemKey={getFileName} nodeIcon={fileIcon('assets/icons')} />
   }
 
   setTreeData(data) {
@@ -70,12 +18,17 @@ export class FileTreeView {
     return this._widget
   }
 
+  selectItem(path) {
+    this.model.setItemSelected(path)
+  }
+
   dispose() {
     this.model = null
     this._widget = null
   }
 }
 
+// пример того, как мог бы выглядеть модуль
 /*
 export default {
   subscriptions: null,

@@ -1,9 +1,6 @@
 import React, { PureComponent } from 'react'
-
 import { createGlobalStyle } from 'styled-components'
-
 import { FileTreeView } from './filetreeview'
-import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 export const ICONS_PATH = 'assets/icons'
 
@@ -97,18 +94,6 @@ const newFileTree = [
 
 const gui = new dat.GUI();
 
-// const obj = {
-//   foo: 'foo',
-//   boolean: false,
-//   func: () => {
-//     console.log('FUNC!!!')
-//   }
-// }
-
-// gui.add(obj, 'foo')
-// gui.add(obj, 'func')
-// gui.add(obj, 'boolean')
-
 
 
 export default class App extends PureComponent {
@@ -120,7 +105,8 @@ export default class App extends PureComponent {
     this.fileTreeView.setTreeData(fileTree)
 
 
-    gui.add(this, 'addTreeData')
+    gui.add(this, '__addTreeData')
+    gui.add(this, '__selectItem')
   }
 
   onItemPress = item => {
@@ -128,8 +114,12 @@ export default class App extends PureComponent {
   }
 
 
-  addTreeData = () => {
+  __addTreeData = () => {
     this.fileTreeView.setTreeData(newFileTree)
+  }
+
+  __selectItem = () => {
+    this.fileTreeView.selectItem('/controllers/login.js')
   }
 
 
@@ -146,17 +136,21 @@ export default class App extends PureComponent {
 
 const theme = {
   list: {
-    activeSelectionBackground: '#', // List/Tree background color for the selected item when the list/tree is active.
+    activeSelectionBackground: '#75715E', // List/Tree background color for the selected item when the list/tree is active.
     activeSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is active.
-    focusBackground: '#', // List/Tree background color for the focused item when the list/tree is active.
+    focusBackground: '#414339', // List/Tree background color for the focused item when the list/tree is active.
     focusForeground: '#', // List/Tree foreground color for the focused item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.
-    hoverBackground: '#', // List/Tree background when hovering over items using the mouse.
+    hoverBackground: '#3e3d32', // List/Tree background when hovering over items using the mouse.
     hoverForeground: '#', // List/Tree foreground when hovering over items using the mouse.
-    inactiveSelectionBackground: '#', // List/Tree background color for the selected item when the list/tree is inactive.
+    inactiveSelectionBackground: '#414339', // List/Tree background color for the selected item when the list/tree is inactive.
     inactiveSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.
     inactiveFocusBackground: '#', // List background color for the focused item when the list is inactive. An active list has keyboard focus, an inactive does not. Currently only supported in lists.
-    invalidItemForeground: '#', // List/Tree foreground color for invalid items, for example an unresolved root in explorer.
-    errorForeground: '#', // Foreground color of list items containing errors.
-    warningForeground: '#' // Foreground color of list items containing warnings.
+    invalidItemForeground: '#B89500', // List/Tree foreground color for invalid items, for example an unresolved root in explorer.
+    errorForeground: '#F48771', //  #A1260D - light Foreground color of list items containing errors.
+    warningForeground: '#4d9e4d' // #117711 - light Foreground color of list items containing warnings.
   }
 }
+
+//  editor
+// back #272822
+// front #f8f8f2

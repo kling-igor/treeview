@@ -13,7 +13,7 @@ const ListItemContainerStyle = styled.li`
   justify-content: space-between;
   align-items: center;
 
-  background-color: transparent;
+  background-color: ${({ selected }) => selected ? '#414339' : 'transparent'};
   line-height: 1.7em;
   color: #cacaca;
 
@@ -21,7 +21,7 @@ const ListItemContainerStyle = styled.li`
   user-select: none;
 
   :hover {
-    background-color: #414339;
+    background-color: ${({ selected }) => selected ? '#414339' : '#303030'};
   }
 `
 
@@ -90,7 +90,7 @@ export class TreeView extends Component {
     }
   }
 
-  renderItem = ({ item, path, depthLevel, isNode, ellapsed }) => {
+  renderItem = ({ item, path, depthLevel, isNode, ellapsed, selected }) => {
     const name = this.itemKey(item)
 
     const fullPath = `${path}/${name}`
@@ -100,7 +100,7 @@ export class TreeView extends Component {
     const icon = this.props.nodeIcon ? this.props.nodeIcon(name, ellapsed, depthLevel) : false
 
     return (
-      <ListItemContainerStyle key={fullPath} onClick={onListItemClick}>
+      <ListItemContainerStyle key={fullPath} onClick={onListItemClick} selected={selected}>
         <ListItemInnerContainerStyle depthLevel={depthLevel} isNode={isNode}>
           {isNode && <NodeArrowStyle ellapsed={ellapsed} />}
           {icon && <ListItemIconStyle height="16" width="16" src={icon} />}
