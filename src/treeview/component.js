@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { observer } from 'mobx-react'
-import styled from 'styled-components'
+import styled, { withTheme } from 'styled-components'
 
 
 const ListItemContainerStyle = styled.li`
@@ -13,15 +13,15 @@ const ListItemContainerStyle = styled.li`
   justify-content: space-between;
   align-items: center;
 
-  background-color: ${({ selected }) => selected ? '#414339' : 'transparent'};
+  background-color: ${({ selected, theme: { list: { activeSelectionBackground } } }) => selected ? activeSelectionBackground : 'transparent'};
   line-height: 1.7em;
-  color: #cacaca;
+  color: ${({ theme: { foreground } }) => foreground};
 
   cursor: pointer;
   user-select: none;
 
   :hover {
-    background-color: ${({ selected }) => selected ? '#414339' : '#303030'};
+    background-color: ${({ selected, theme: { list: { activeSelectionBackground, hoverBackground } } }) => selected ? activeSelectionBackground : hoverBackground};
   }
 `
 
@@ -35,7 +35,7 @@ const ListItemInnerContainerStyle = styled.span`
 `
 
 const NodeArrowStyle = styled.span`
-  color: white;
+  color: ${({ theme: { type } }) => type === 'dark' ? 'white' : 'black'};
   margin-right: 6px;
   display: inline-block;
   transform: ${({ ellapsed }) => (ellapsed ? 'rotate(-45deg)' : 'rotate(-90deg)')};
@@ -69,8 +69,8 @@ const ListItemIconStyle = styled.img`
   margin-right: 4px;
 `
 
-@observer
-export class TreeView extends Component {
+
+export const TreeView = withTheme(observer(class extends Component {
   constructor(props) {
     super(props)
     this.itemKey = this.props.itemKey || (f => f)
@@ -102,7 +102,7 @@ export class TreeView extends Component {
     return (
       <ListItemContainerStyle key={fullPath} onClick={onListItemClick} selected={selected}>
         <ListItemInnerContainerStyle depthLevel={depthLevel} isNode={isNode}>
-          {isNode && <NodeArrowStyle ellapsed={ellapsed} />}
+          {isNode && <NodeArrowStyle ellapsed={ellapsed} theme={this.props.theme} />}
           {icon && <ListItemIconStyle height="16" width="16" src={icon} />}
           <ListItemLabelStyle>{name}</ListItemLabelStyle>
         </ListItemInnerContainerStyle>
@@ -115,4 +115,4 @@ export class TreeView extends Component {
     const { flatData } = this.props.data
     return <ListStyle>{flatData.map(this.renderItem)}</ListStyle>
   }
-}
+}))

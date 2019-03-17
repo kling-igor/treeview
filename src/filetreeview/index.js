@@ -4,6 +4,11 @@ import { TreeView, TreeViewModel } from '../treeview'
 import fileIcon from './fileIcon'
 
 const getFileName = ({ fileName }) => fileName
+
+
+// на этом уровне происходит связка с event и передача воздейтствий в модель императивнм способом
+
+
 export class FileTreeView {
   constructor(onItemPress) {
     this.model = new TreeViewModel(getFileName, onItemPress)
@@ -18,7 +23,7 @@ export class FileTreeView {
     return this._widget
   }
 
-  selectItem(path) {
+  setItemSelected(path) {
     this.model.setItemSelected(path)
   }
 

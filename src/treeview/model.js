@@ -1,9 +1,6 @@
 import { observalbe, computed, observable, action } from 'mobx'
 
 const flatTree = itemKey => (tree, selectedItemPath = null, path = '', flattenTree = [], depthLevel = 0) => {
-
-  console.log('SELECTED PATH:', selectedItemPath)
-
   tree.reduce((accum, item) => {
     const { children, ellapsed = false, ...rest } = item
 
@@ -14,7 +11,6 @@ const flatTree = itemKey => (tree, selectedItemPath = null, path = '', flattenTr
     }
 
     if (selectedItemPath === `${path}/${itemKey(item)}`) {
-      console.log('SELECTED:', `${path}/${itemKey(item)}`)
       flatItem = { ...flatItem, selected: true }
     }
 

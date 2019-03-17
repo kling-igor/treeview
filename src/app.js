@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { FileTreeView } from './filetreeview'
 
 export const ICONS_PATH = 'assets/icons'
@@ -96,6 +96,30 @@ const gui = new dat.GUI();
 
 
 
+const theme = {
+  type: 'dark',
+  foreground: '#cacaca', // Overall foreground color. This color is only used if not overridden by a component.
+
+  list: {
+    activeSelectionBackground: '#75715E', // List/Tree background color for the selected item when the list/tree is active.
+    activeSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is active.
+    focusBackground: '#414339', // List/Tree background color for the focused item when the list/tree is active.
+    focusForeground: '#', // List/Tree foreground color for the focused item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.
+    hoverBackground: '#3e3d32', // List/Tree background when hovering over items using the mouse.
+    hoverForeground: '#', // List/Tree foreground when hovering over items using the mouse.
+    inactiveSelectionBackground: '#414339', // List/Tree background color for the selected item when the list/tree is inactive.
+    inactiveSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.
+    inactiveFocusBackground: '#', // List background color for the focused item when the list is inactive. An active list has keyboard focus, an inactive does not. Currently only supported in lists.
+    invalidItemForeground: '#B89500', // List/Tree foreground color for invalid items, for example an unresolved root in explorer.
+    errorForeground: '#F48771', //  #A1260D - light Foreground color of list items containing errors.
+    warningForeground: '#4d9e4d' // #117711 - light Foreground color of list items containing warnings.
+  }
+}
+
+//  editor
+// back #272822
+// front #f8f8f2
+
 export default class App extends PureComponent {
 
   constructor(props) {
@@ -119,7 +143,7 @@ export default class App extends PureComponent {
   }
 
   __selectItem = () => {
-    this.fileTreeView.selectItem('/controllers/login.js')
+    this.fileTreeView.setItemSelected('/controllers/login.js')
   }
 
 
@@ -127,30 +151,12 @@ export default class App extends PureComponent {
     return (
       <>
         <GlobalStyle />
-        {this.fileTreeView.widget}
+        <ThemeProvider theme={theme}>
+          {this.fileTreeView.widget}
+        </ThemeProvider >
       </>
     )
   }
 }
 
 
-const theme = {
-  list: {
-    activeSelectionBackground: '#75715E', // List/Tree background color for the selected item when the list/tree is active.
-    activeSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is active.
-    focusBackground: '#414339', // List/Tree background color for the focused item when the list/tree is active.
-    focusForeground: '#', // List/Tree foreground color for the focused item when the list/tree is active. An active list/tree has keyboard focus, an inactive does not.
-    hoverBackground: '#3e3d32', // List/Tree background when hovering over items using the mouse.
-    hoverForeground: '#', // List/Tree foreground when hovering over items using the mouse.
-    inactiveSelectionBackground: '#414339', // List/Tree background color for the selected item when the list/tree is inactive.
-    inactiveSelectionForeground: '#', // List/Tree foreground color for the selected item when the list/tree is inactive. An active list/tree has keyboard focus, an inactive does not.
-    inactiveFocusBackground: '#', // List background color for the focused item when the list is inactive. An active list has keyboard focus, an inactive does not. Currently only supported in lists.
-    invalidItemForeground: '#B89500', // List/Tree foreground color for invalid items, for example an unresolved root in explorer.
-    errorForeground: '#F48771', //  #A1260D - light Foreground color of list items containing errors.
-    warningForeground: '#4d9e4d' // #117711 - light Foreground color of list items containing warnings.
-  }
-}
-
-//  editor
-// back #272822
-// front #f8f8f2
